@@ -1,0 +1,414 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "defaultValue": null,
+            "type": "String"
+        },
+		    "manager_vmImage": {
+            "type": "String"
+        },
+			"worker_vmImage": {
+            "type": "String"
+        },
+			"DB_vmImage": {
+            "type": "String"
+        },
+        "storageAccounts_wso2ascluster8638_name": {
+            "defaultValue": "wso2ascluster8638",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Compute/virtualMachines/ASManager'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "ASManager",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_F1"
+                },
+                "storageProfile": {
+                        "osDisk": {
+                            "name": "ASManager",
+                            "caching": "ReadWrite",
+                            "createOption": "FromImage",
+                            "osType": "Linux",
+                            "image": {
+                                "uri": "[parameters('manager_vmImage')]"
+                            }
+                        }
+                    },
+                "osProfile": {
+                    "computerName": "ASManager",
+                    "adminUsername": "wso2",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
+                    },
+                    "secrets": [],
+                    "adminPassword": "nex@123456789"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'ASManagerNI')]"
+                        }
+                    ]
+                }
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_wso2ascluster8638_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', 'ASManagerNI')]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Compute/virtualMachines/ASWorker'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "ASWorker",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_F1"
+                },
+                "storageProfile": {
+                        "osDisk": {
+                            "name": "ASWorker",
+                            "caching": "ReadWrite",
+                            "createOption": "FromImage",
+                            "osType": "Linux",
+                            "image": {
+                                "uri": "[parameters('worker_vmImage')]"
+                            }
+                        }
+                    },
+                "osProfile": {
+                    "computerName": "ASWorker",
+                    "adminUsername": "wso2",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
+                    },
+                    "secrets": [],
+                    "adminPassword": "nex@123456789"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'ASWorkerNI')]"
+                        }
+                    ]
+                }
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_wso2ascluster8638_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', 'ASWorkerNI')]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Compute/virtualMachines/DB'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "DB",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_F1"
+                },
+                "storageProfile": {
+                        "osDisk": {
+                            "name": "DB",
+                            "caching": "ReadWrite",
+                            "createOption": "FromImage",
+                            "osType": "Linux",
+                            "image": {
+                                "uri": "[parameters('DB_vmImage')]"
+                            }
+                        }
+                    },
+                "osProfile": {
+                    "computerName": "DB",
+                    "adminUsername": "wso2",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
+                    },
+                    "secrets": [],
+                    "adminPassword": "nex@123456789"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'DBNI')]"
+                        }
+                    ]
+                }
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_wso2ascluster8638_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', 'DBNI' )]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Network/networkInterfaces/asmanager60'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "ASManagerNI",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.1.0.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'ASManager')]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'WSO2ASCluster'), '/subnets/default')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups','WSO2NSG')]"
+                }
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'ASManager')]",
+                "[resourceId('Microsoft.Network/virtualNetworks', 'WSO2ASCluster')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'WSO2NSG')]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Network/networkInterfaces/asworker416'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "ASWorkerNI",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.1.0.5",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'ASWorker')]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'WSO2ASCluster'), '/subnets/default')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'WSO2NSG')]"
+                }
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'ASWorker')]",
+                "[resourceId('Microsoft.Network/virtualNetworks', 'WSO2ASCluster')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'WSO2NSG')]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Network/networkInterfaces/db569'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "DBNI",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.1.0.6",
+                            "privateIPAllocationMethod": "Static",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'DB')]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'WSO2ASCluster'), '/subnets/default')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'DB')]"
+                }
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'DB')]",
+                "[resourceId('Microsoft.Network/virtualNetworks', 'WSO2ASCluster')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'DB')]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Network/networkSecurityGroups/DB'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "DB",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-ssh",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Network/networkSecurityGroups/WSO2NSG'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "WSO2NSG",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "sshin",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "sshout",
+                        "properties": {
+                            "description": "",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Outbound"
+                        }
+                    }
+                ]
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Network/publicIPAddresses/ASManager'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "ASManager",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Network/publicIPAddresses/ASWorker'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "ASWorker",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Network/publicIPAddresses/DB'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "DB",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/WSO2ASCluster/providers/Microsoft.Network/virtualNetworks/WSO2ASCluster'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "WSO2ASCluster",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.1.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "10.1.0.0/24"
+                        }
+                    }
+                ]
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/a769e431-6de5-4b28-9f78-b371c2d83ab3/resourceGroups/wso2ascluster/providers/Microsoft.Storage/storageAccounts/wso2ascluster8638'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_wso2ascluster8638_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "properties": {},
+            "resources": [],
+            "dependsOn": []
+        }
+    ]
+}
