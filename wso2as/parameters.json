@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachine_adminPassword": {
+            "value": "wso2@123456789"
+        },
+        "virtualMachine_name": {
+            "value": "wso2vm2"
+        },
+        "networkInterface_name": {
+            "value": "wso2NI2"
+        },
+        "networkSecurityGroup_name": {
+            "value": "wso2NSG"
+        },
+        "publicIPAddress_name": {
+            "value": "wso2IP2"
+        },
+        "virtualNetwork_name": {
+            "value": "wso2vnet"
+        },
+        "storageAccount_name": {
+            "value": "vmrg427"
+        }
+    }
+}
