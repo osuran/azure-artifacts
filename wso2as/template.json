@@ -10,6 +10,9 @@
             "defaultValue": "VM1",
             "type": "String"
         },
+		"vm_image": {
+            "type": "String"
+        },
         "networkInterface_name": {
             "defaultValue": "vm1892",
             "type": "String"
@@ -54,7 +57,7 @@
                         "name": "[parameters('virtualMachine_name')]",
                         "createOption": "FromImage",
                         "vhd": {
-                            "uri": "[concat('https', '://', parameters('storageAccount_name'), '.blob.core.windows.net', concat('/vhds/', parameters('virtualMachine_name'),'2016711102842.vhd'))]"
+                            "uri": "[parameters('vm_image')]"
                         },
                         "caching": "ReadWrite"
                     },
