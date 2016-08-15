@@ -6,12 +6,12 @@ The Azure Artifacts provide the resources and instructions to deploy WSO2 Applic
 Below steps are invloved in deploying azure artifacts
 
 * Create a Service Principal and bind it to an application
-* Create the VM image
+* Capture the VM image
 * Copy existing VM image
 * Update the parameters.json
 * Run the deploy.sh
 
-You create a service principal and bind it to an application so that the Azure login process can be automated. Then if you intend to have your own VM images instead of the VM images provided by WSO2, you can create those VM images, otherwise just igonre this step and jump to the nest step where you copy already created VM images to your Azure Storage Account. After that update the parameters.json according to your deployment and run the deploy.sh .
+You create a service principal and bind it to an application so that the Azure login process can be automated. Then if you intend to have your own VM images instead of the VM images provided by WSO2, you can capture those VM images, otherwise just igonre this step and jump to the nest step where you copy already created VM images to your Azure Storage Account. After that update the parameters.json according to your deployment and run the deploy.sh .
 
 ### 1) Create a Service Principal and bind it to an application 
 
@@ -43,7 +43,7 @@ Example:
 
 #### 1.6 Assigning roles to Service Principal
 
-Once you created the service principal, next step is to grant permission on it, that is assigning roles. More about this can be found [here.](https://azure.microsoft.com/en-us/documentation/articles/role-based-access-built-in-roles/)
+Once you created the service principal, next step is to grant permission on it, that is assigning roles. More about role types can be found [here.](https://azure.microsoft.com/en-us/documentation/articles/role-based-access-built-in-roles/)
 
 >     azure role assignment create --spn <service-principal-name> --roleName "Owner" --subscription <subscription-id>
 
@@ -67,46 +67,40 @@ Example:
 
 
 
+### 2) Capture the VM image. 
 
+If you intend to use already captured VM images, then kindly ignore this section.
 
+#### 2.1 Log into to your VM from a SSH client and execute the following command.
 
-
-
-
-
-
-
-
-
-
-      
-      
-      
-      
-### 1) Capture the Virtual Machine. 
-* Log into to your VM from a SSH client and execute the following command.
-
-$sudo waagent -deprovision+user
+>  sudo waagent -deprovision+user
 
 type 'y' to continue and then exit the ssh client
 
-* Then log into to your Azure subscription from Azue CLI in your local machine. If you have not installed Azure CLI click [here](https://azure.microsoft.com/en-us/documentation/articles/xplat-cli-install/):
-azure login
+#### 2.2  Then log into to your Azure subscription from Azue CLI (ignore this step if you have already logged in from the step 1.7)
 
-* Make sure you are in Resource Manager mode:
-azure config mode arm
+>  azure login
 
-* Stop the VM which you already deprovisioned by using the following command:
-azure vm deallocate -g your-resource-group-name -n your-virtual-machine-name
+#### 2.3 Make sure you are in Resource Manager mode (ignore this step if you are already in the arm mode)
 
-* Generalize the VM with the following command:
-azure vm generalize –g your-resource-group-name -n your-virtual-machine-name
+>  azure config mode arm
 
-* Now capture the image and a local file template with the following command:
-azure vm capture your-resource-group-name your-virtual-machine-name your-vhd-name-prefix -t path-to-your-template-file-name.json
+#### 2.4  Stop the VM which you already deprovisioned by using the following command
+
+>  azure vm deallocate -g your-resource-group-name -n your-virtual-machine-name
+
+#### 2.5 Generalize the VM with the following command
+
+>  azure vm generalize –g your-resource-group-name -n your-virtual-machine-name
+
+#### 2.6 Now capture the image and a local file template with the following command
+
+>  azure vm capture your-resource-group-name your-virtual-machine-name your-vhd-name-prefix -t path-to-your-template-file-name.json
+
+Captured VM image is stored in the same azure storage account where the original VM resided. {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URI
 
 ### 2) Update the parameters.json with the infromation of the Virtual machine that you are going to create.
       As the vmImage parameter, provide the link to the captured VM image. Follow the below path to find the VM image which is stored in the storage account where the origilan VM was resided. 
-      {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>UR
+      {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URI
       
 ### 3) Run the deploy.sh by providing required command line arguments. 
