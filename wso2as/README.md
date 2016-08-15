@@ -16,13 +16,13 @@ azure login
 azure config mode arm
 
 * Stop the VM which you already deprovisioned by using the following command:
-azure vm deallocate -g <your-resource-group-name> -n <your-virtual-machine-name>
+azure vm deallocate -g your-resource-group-name -n your-virtual-machine-name
 
 * Generalize the VM with the following command:
-azure vm generalize –g <your-resource-group-name> -n <your-virtual-machine-name>
+azure vm generalize –g your-resource-group-name -n your-virtual-machine-name
 
 * Now capture the image and a local file template with the following command:
-azure vm capture <your-resource-group-name> <your-virtual-machine-name> <your-vhd-name-prefix> -t <path-to-your-template-file-name.json>
+azure vm capture your-resource-group-name your-virtual-machine-name your-vhd-name-prefix -t path-to-your-template-file-name.json
 
 ### 2) Update the parameters.json with the infromation of the Virtual machine that you are going to create.
       As the vmImage parameter, provide the link to the captured VM image. Follow the below path to find the VM image which is stored in the storage account where the origilan VM was resided. 
