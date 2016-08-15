@@ -3,10 +3,13 @@ The Azure Artifacts provide the resources and instructions to deploy WSO2 Applic
 
 ## How to deploy
 
+Below steps are invloved in deploying azure artifacts
+
 ### 1) Capture the Virtual Machine. 
 * Log into to your VM from a SSH client and execute the following command.
 
 $sudo waagent -deprovision+user
+
 type 'y' to continue and then exit the ssh client
 
 * Then log into to your Azure subscription from Azue CLI in your local machine. If you have not installed Azure CLI click [here](https://azure.microsoft.com/en-us/documentation/articles/xplat-cli-install/):
