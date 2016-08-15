@@ -8,6 +8,9 @@
         "virtualMachine_name": {
             "value": "wso2vm2"
         },
+		"vm_image": {
+            "value": "https://yourstorageaccount.blob.core.windows.net/system/Microsoft.Compute/Images/vhds/wso22016711102842.vhd"
+        },
         "networkInterface_name": {
             "value": "wso2NI2"
         },
@@ -21,7 +24,7 @@
             "value": "wso2vnet"
         },
         "storageAccount_name": {
-            "value": "vmrg427"
+            "value": "yourstorageaccount"
         }
     }
 }
