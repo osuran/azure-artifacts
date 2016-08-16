@@ -106,5 +106,9 @@ Some sample paramter values are provided in the parameters.json file.
 As the vm_image parameter, provide the link to the captured VM image. Follow the below path to find the VM image which is stored in the storage account where the origilan VM was resided. 
 
 {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URL
+
+Sample vm_image parameter value would look like this: 
+
+https://yourstorageaccount.blob.core.windows.net/system/Microsoft.Compute/Images/vhds/testvm1image-osDisk.a2652bad-ba56-4c0a-bd22-a651ccf8cfc8.vhd
       
 ### 3) Run the deploy.sh by providing required command line arguments. 
