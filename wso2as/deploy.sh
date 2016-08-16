@@ -44,6 +44,15 @@ if [ -z "$resourceGroupLocation" ]; then
 	read resourceGroupLocation
 fi
 
+echo "Enter service principal/client Id"
+read clientId
+
+echo "Enter service principal password/ client secret"
+read password
+
+echo "Enter the tenant Id"
+read tenant
+
 #templateFile Path - template file to be used
 templateFilePath="template.json"
 
@@ -56,7 +65,7 @@ if [ -z "$subscriptionId" ] || [ -z "$resourceGroupName" ] || [ -z "$deploymentN
 fi
 
 #login to azure using your credentials
-azure login
+azure login --username $clientId --password $password --service-principal --tenant $tenant --environment AzureCloud
 
 #set the default subscription id
 azure account set $subscriptionId

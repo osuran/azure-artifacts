@@ -6,19 +6,19 @@
             "value": "wso2@123456789"
         },
         "virtualMachine_name": {
-            "value": "wso2vm2"
+            "value": "wso2vm"
         },
 		"vm_image": {
-            "value": "https://yourstorageaccount.blob.core.windows.net/system/Microsoft.Compute/Images/vhds/wso22016711102842.vhd"
+            "value": "https://yourstorageaccount.blob.core.windows.net/system/Microsoft.Compute/Images/vhds/testvm1image-osDisk.a2652bad-ba56-4c0a-bd22-a651ccf8cfc8.vhd"
         },
         "networkInterface_name": {
-            "value": "wso2NI2"
+            "value": "wso2NI"
         },
         "networkSecurityGroup_name": {
             "value": "wso2NSG"
         },
         "publicIPAddress_name": {
-            "value": "wso2IP2"
+            "value": "wso2IP"
         },
         "virtualNetwork_name": {
             "value": "wso2vnet"
