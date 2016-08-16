@@ -69,7 +69,12 @@ Example:
 
 ### 2) Capture the VM image. 
 
-If you intend to use already captured VM images, then kindly ignore this section.
+If you intend to use already captured VM images, then kindly ignore this step.
+
+First of all you have to configure your VM with WSO2 Application Server. Following are few things to keep in mind.
+
+* '/home/*' will be comletely erased so that do not keep any file are directory in it.
+* In the WSO2 documentation, you will be asked to update the .bashrc with java home. Do not update /home/<user>/.bashrc , instead update /etc/bash.bashrc with the java home.
 
 #### 2.1 Log into to your VM from a SSH client and execute the following command.
 
