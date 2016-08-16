@@ -87,15 +87,15 @@ type 'y' to continue and then exit the ssh client
 
 #### 2.4  Stop the VM which you already deprovisioned by using the following command
 
->      azure vm deallocate -g  < your-resource-group-name > -n  < your-virtual-machine-name >
+>      azure vm deallocate -g  <your-resource-group-name> -n  <your-virtual-machine-name>
 
 #### 2.5 Generalize the VM with the following command
 
->     azure vm generalize –g  < your-resource-group-name >  -n  < your-virtual-machine-name >
+>     azure vm generalize –g  <your-resource-group-name>  -n  <your-virtual-machine-name>
 
 #### 2.6 Now capture the image and a local file template with the following command
 
->  azure vm capture <your-resource-group-name> <your-virtual-machine-name> <your-vhd-name-prefix> -t <path-to-your-template-file-name.json>
+>      azure vm capture <your-resource-group-name> <your-virtual-machine-name> <your-vhd-name-prefix> -t <path-to-your-template-file-name.json>
 
 Captured VM image is stored in the same azure storage account where the original VM resided. {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URL
 
