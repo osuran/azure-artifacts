@@ -79,30 +79,32 @@ type 'y' to continue and then exit the ssh client
 
 #### 2.2  Then log into to your Azure subscription from Azue CLI (ignore this step if you have already logged in from the step 1.7)
 
->  azure login
+>     azure login
 
 #### 2.3 Make sure you are in Resource Manager mode (ignore this step if you are already in the arm mode)
 
->  azure config mode arm
+>     azure config mode arm
 
 #### 2.4  Stop the VM which you already deprovisioned by using the following command
 
->  azure vm deallocate -g your-resource-group-name -n your-virtual-machine-name
+>      azure vm deallocate -g  < your-resource-group-name > -n  < your-virtual-machine-name >
 
 #### 2.5 Generalize the VM with the following command
 
->  azure vm generalize –g your-resource-group-name -n your-virtual-machine-name
+>     azure vm generalize –g  < your-resource-group-name >  -n  < your-virtual-machine-name >
 
 #### 2.6 Now capture the image and a local file template with the following command
 
->  azure vm capture your-resource-group-name your-virtual-machine-name your-vhd-name-prefix -t path-to-your-template-file-name.json
+>  azure vm capture <your-resource-group-name> <your-virtual-machine-name> <your-vhd-name-prefix> -t <path-to-your-template-file-name.json>
 
-Captured VM image is stored in the same azure storage account where the original VM resided. {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URI
+Captured VM image is stored in the same azure storage account where the original VM resided. {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URL
 
 ### 3) Update the parameters.json with the infromation of the Virtual machine that you are going to create.
 
 
-As the vmImage parameter, provide the link to the captured VM image. Follow the below path to find the VM image which is stored in the storage account where the origilan VM was resided. 
+Some sample paramter values are provided in the parameters.json file. 
+As the vm_image parameter, provide the link to the captured VM image. Follow the below path to find the VM image which is stored in the storage account where the origilan VM was resided. 
 
+{your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URL
       
 ### 3) Run the deploy.sh by providing required command line arguments. 
