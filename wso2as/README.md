@@ -99,8 +99,10 @@ type 'y' to continue and then exit the ssh client
 
 Captured VM image is stored in the same azure storage account where the original VM resided. {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URI
 
-### 2) Update the parameters.json with the infromation of the Virtual machine that you are going to create.
-      As the vmImage parameter, provide the link to the captured VM image. Follow the below path to find the VM image which is stored in the storage account where the origilan VM was resided. 
-      {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URI
+### 3) Update the parameters.json with the infromation of the Virtual machine that you are going to create.
+
+
+As the vmImage parameter, provide the link to the captured VM image. Follow the below path to find the VM image which is stored in the storage account where the origilan VM was resided. 
+
       
 ### 3) Run the deploy.sh by providing required command line arguments. 
