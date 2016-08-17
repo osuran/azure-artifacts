@@ -11,7 +11,7 @@ Below steps are invloved in deploying azure artifacts
 * Update the parameters.json
 * Run the deploy.sh
 
-You create a service principal and bind it to an application so that the Azure login process can be automated. Then if you intend to have your own VM images instead of the VM images provided by WSO2, you can capture those VM images, otherwise just igonre this step and jump to the nest step where you copy already created VM images to your Azure Storage Account. After that update the parameters.json according to your deployment and run the deploy.sh .
+You create a service principal and bind it to an application so that the Azure login process can be automated. Then if you intend to have your own VM images instead of the VM images provided by a thrid party, you can capture those VM images, otherwise just igonre this step and jump to the nest step where you copy already created VM images to your Azure Storage Account. After that update the parameters.json according to your deployment and run the deploy.sh .
 
 ### 1) Create a Service Principal and bind it to an application 
 
@@ -69,7 +69,12 @@ Example:
 
 ### 2) Capture the VM image. 
 
-If you intend to use already captured VM images, then kindly ignore this section.
+If you intend to use already captured VM images, then kindly ignore this step.
+
+First of all you have to configure your VM with WSO2 Application Server. Following are few things to keep in mind.
+
+* '/home/*' will be comletely erased so that do not keep any file are directory in it.
+* In the WSO2 documentation, you will be asked to update the .bashrc with java home. Do not update /home/<user>/.bashrc , instead update /etc/bash.bashrc with the java home.
 
 #### 2.1 Log into to your VM from a SSH client and execute the following command.
 
@@ -99,7 +104,25 @@ type 'y' to continue and then exit the ssh client
 
 Captured VM image is stored in the same azure storage account where the original VM resided. {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URL
 
-### 3) Update the parameters.json with the infromation of the Virtual machine that you are going to create.
+### 3) Copy Existing VM images
+
+There are few ways to copy VM images withing or across Azure storage acconts. 
+
+#### 3.1 Azcopy is one of them, you can download Azcopy from [here](https://azure.microsoft.com/en-us/documentation/articles/storage-use-azcopy/)
+
+>     AzCopy /Source:https://sourceaccount.blob.core.windows.net/mycontainer1 /Dest:https://destaccount.blob.core.windows.net/mycontainer2 /SourceKey:key1 /DestKey:key2 /Pattern:abc.txt
+
+Note that Azcopy is available only for Windows.
+
+#### 3.2 Next method is using Azure CLI.
+
+>     azure storage blob copy start '<https://<sourceStorageAccount>.blob.core.windows.net/mycontainer2/myBlockBlob2>' <destinationAccountContainer>
+
+This is the prefered method since previous method needs the source and destination storage account keys. In this method, the source URL provided for the copy operation must either be publicly accessible, or include a SAS (shared access signature) token.
+
+
+
+### 4) Update the parameters.json with the infromation of the Virtual machine that you are going to create.
 
 
 Some sample paramter values are provided in the parameters.json file. 
@@ -111,4 +134,8 @@ Sample vm_image parameter value would look like this:
 
 https://yourstorageaccount.blob.core.windows.net/system/Microsoft.Compute/Images/vhds/testvm1image-osDisk.a2652bad-ba56-4c0a-bd22-a651ccf8cfc8.vhd
       
-### 3) Run the deploy.sh by providing required command line arguments. 
+### 5) Run the deploy.sh  
+
+Subscription ID, Resource group and the deployment names must be provided either as command line arguments or when prompted, If you did not provide them as command line arguments you will be prompted to enter them later. Deployement name can be anything as it is only for the sake of naming the deployment. If the entered resource group is new, then you have to provide the location of it as well.
+
+And then you will be asked to enter Service Principal/ Client Id, password, and tenant Id. There you an enter the values you extracted in the first section of this article. 
