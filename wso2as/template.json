@@ -2,205 +2,195 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "virtualMachine_adminPassword": {
-            "defaultValue": null,
-            "type": "SecureString"
+        "customVmName": {
+            "type": "String",
+            "metadata": {
+                "description": "This is the name of the your VM"
+            }
         },
-        "virtualMachine_name": {
-            "defaultValue": "VM1",
-            "type": "String"
+        "userImageStorageAccountName": {
+            "type": "String",
+            "metadata": {
+                "description": "This is the name of the your storage account"
+            }
         },
-		"vm_image": {
-            "type": "String"
+        "osDiskVhdUri": {
+            "type": "String",
+            "metadata": {
+                "description": "Uri of the your user image"
+            }
         },
-        "networkInterface_name": {
-            "defaultValue": "vm1892",
-            "type": "String"
+        "dnsLabelPrefix": {
+            "type": "String",
+            "metadata": {
+                "description": "DNS Label for the Public IP. Must be lowercase. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$ or it will raise an error."
+            }
         },
-        "networkSecurityGroup_name": {
-            "defaultValue": "VM1-nsg",
-            "type": "String"
+        "adminUserName": {
+            "type": "String",
+            "metadata": {
+                "description": "User Name for the Virtual Machine"
+            }
         },
-        "publicIPAddress_name": {
-            "defaultValue": "VM1-ip",
-            "type": "String"
+        "adminPassword": {
+            "type": "SecureString",
+            "metadata": {
+                "description": "Password for the Virtual Machine"
+            }
         },
-        "virtualNetwork_name": {
-            "defaultValue": "vmrg-vnet",
-            "type": "String"
+        "osType": {
+            "allowedValues": [
+                "Windows",
+                "Linux"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "This is the OS that your VM will be running"
+            }
         },
-        "storageAccount_name": {
-            "defaultValue": "vmrg427",
-            "type": "String"
+        "vmSize": {
+            "type": "String",
+            "metadata": {
+                "description": "This is the size of your VM"
+            }
+        },
+        "newOrExistingVnet": {
+            "allowedValues": [
+                "new",
+                "existing"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "Select if this template needs a new VNet or will reference an existing VNet"
+            }
+        },
+        "newOrExistingVnetName": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "New or Existing VNet Name"
+            }
+        },
+        "newOrExistingSubnetName": {
+            "defaultValue": "Subnet1",
+            "type": "String",
+            "metadata": {
+                "description": "Subnet Name"
+            }
         }
     },
-    "variables": {},
+    "variables": {
+        "publicIPAddressName": "[concat(parameters('customVmName'),'PublicIP')]",
+        "vmName": "[parameters('customVmName')]",
+        "nicName": "[concat(parameters('customVmName'),'Nic')]",
+        "publicIPAddressType": "Dynamic",
+        "apiVersion": "2015-06-15",
+        "templatelink": "[concat('https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/101-vm-from-user-image/',parameters('newOrExistingVnet'),'vnet.json')]"
+    },
     "resources": [
         {
-            "comments": "Generalized from resource: '/subscriptions/d0183826-ae21-4187-a4aa-d704163196b2/resourceGroups/vmrg/providers/Microsoft.Compute/virtualMachines/VM1'.",
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[parameters('virtualMachine_name')]",
-            "apiVersion": "2015-06-15",
-            "location": "eastus",
+            "type": "Microsoft.Resources/deployments",
+            "name": "vnet-template",
+            "apiVersion": "2015-01-01",
             "properties": {
-                "hardwareProfile": {
-                    "vmSize": "Standard_F1s"
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[variables('templatelink')]",
+                    "contentVersion": "1.0.0.0"
                 },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "Canonical",
-                        "offer": "UbuntuServer",
-                        "sku": "14.04.4-LTS",
-                        "version": "latest"
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[parameters('newOrExistingVnetName')]"
                     },
-                    "osDisk": {
-                        "name": "[parameters('virtualMachine_name')]",
-                        "createOption": "FromImage",
-                        "vhd": {
-                            "uri": "[parameters('vm_image')]"
-                        },
-                        "caching": "ReadWrite"
-                    },
-                    "dataDisks": []
-                },
-                "osProfile": {
-                    "computerName": "[parameters('virtualMachine_name')]",
-                    "adminUsername": "wso2",
-                    "linuxConfiguration": {
-                        "disablePasswordAuthentication": false
-                    },
-                    "secrets": [],
-                    "adminPassword": "[parameters('virtualMachine_adminPassword')]"
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterface_name'))]"
-                        }
-                    ]
+                    "subnetName": {
+                        "value": "[parameters('newOrExistingSubnetName')]"
+                    }
                 }
-            },
-            "resources": [],
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccount_name'))]",
-                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterface_name'))]"
-            ]
+            }
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/d0183826-ae21-4187-a4aa-d704163196b2/resourceGroups/vmrg/providers/Microsoft.Network/networkInterfaces/vm1892'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressName')]",
+            "apiVersion": "[variables('apiVersion')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+                }
+            }
+        },
+        {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[parameters('networkInterface_name')]",
+            "name": "[variables('nicName')]",
             "apiVersion": "2016-03-30",
-            "location": "eastus",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
                         "properties": {
-                            "privateIPAddress": "10.0.0.4",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddress_name'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
                             },
                             "subnet": {
-                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetwork_name')), '/subnets/default')]"
+                                "id": "[reference('vnet-template').outputs.subnet1Ref.value]"
                             }
                         }
                     }
-                ],
-                "dnsSettings": {
-                    "dnsServers": []
-                },
-                "enableIPForwarding": false,
-                "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroup_name'))]"
-                }
+                ]
             },
-            "resources": [],
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddress_name'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetwork_name'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroup_name'))]"
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
+                "Microsoft.Resources/deployments/vnet-template"
             ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/d0183826-ae21-4187-a4aa-d704163196b2/resourceGroups/vmrg/providers/Microsoft.Network/networkSecurityGroups/VM1-nsg'.",
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[parameters('networkSecurityGroup_name')]",
-            "apiVersion": "2016-03-30",
-            "location": "eastus",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmName')]",
+            "apiVersion": "[variables('apiVersion')]",
+            "location": "[resourceGroup().location]",
             "properties": {
-                "securityRules": [
-                    {
-                        "name": "default-allow-ssh",
-                        "properties": {
-                            "protocol": "Tcp",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "22",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 1000,
-                            "direction": "Inbound"
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "name": "[concat(variables('vmName'),'-osDisk')]",
+                        "osType": "[parameters('osType')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "image": {
+                            "uri": "[parameters('osDiskVhdUri')]"
+                        },
+                        "vhd": {
+                            "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('userImageStorageAccountName')), variables('apiVersion')).primaryEndpoints.blob, 'vhds/',variables('vmName'), uniquestring(resourceGroup().id), 'osDisk.vhd')]"
                         }
                     }
-                ]
-            },
-            "resources": [],
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/d0183826-ae21-4187-a4aa-d704163196b2/resourceGroups/vmrg/providers/Microsoft.Network/publicIPAddresses/VM1-ip'.",
-            "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[parameters('publicIPAddress_name')]",
-            "apiVersion": "2016-03-30",
-            "location": "eastus",
-            "properties": {
-                "publicIPAllocationMethod": "Dynamic",
-                "idleTimeoutInMinutes": 4
-            },
-            "resources": [],
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/d0183826-ae21-4187-a4aa-d704163196b2/resourceGroups/vmrg/providers/Microsoft.Network/virtualNetworks/vmrg-vnet'.",
-            "type": "Microsoft.Network/virtualNetworks",
-            "name": "[parameters('virtualNetwork_name')]",
-            "apiVersion": "2016-03-30",
-            "location": "eastus",
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "10.0.0.0/16"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+                        }
                     ]
                 },
-                "subnets": [
-                    {
-                        "name": "default",
-                        "properties": {
-                            "addressPrefix": "10.0.0.0/24"
-                        }
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true",
+                        "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('userImageStorageAccountName')), variables('apiVersion')).primaryEndpoints.blob)]"
                     }
-                ]
+                }
             },
-            "resources": [],
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/d0183826-ae21-4187-a4aa-d704163196b2/resourceGroups/vmrg/providers/Microsoft.Storage/storageAccounts/vmrg427'.",
-            "type": "Microsoft.Storage/storageAccounts",
-            "sku": {
-                "name": "Standard_LRS",
-                "tier": "Standard"
-            },
-            "kind": "Storage",
-            "name": "[parameters('storageAccount_name')]",
-            "apiVersion": "2016-01-01",
-            "location": "eastus",
-            "tags": {},
-            "properties": {},
-            "resources": [],
-            "dependsOn": []
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+            ]
         }
     ]
 }

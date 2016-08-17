@@ -2,29 +2,38 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "virtualMachine_adminPassword": {
+        "customVmName": {
+            "value": "customvm7"
+        },
+        "userImageStorageAccountName": {
+            "value": "testdisks20000"
+        },
+        "osDiskVhdUri": {
+            "value": "https://testdisks20000.blob.core.windows.net/system/Microsoft.Compute/Images/vhds/testvm2image-osDisk.a6e24874-624a-4d53-8cd5-052994f75f1b.vhd"
+        },
+        "dnsLabelPrefix": {
+            "value": "wso27"
+        },
+        "adminUserName": {
+            "value": "wso2"
+        },
+        "adminPassword": {
             "value": "wso2@123456789"
         },
-        "virtualMachine_name": {
-            "value": "wso2vm"
+        "osType": {
+            "value": "Linux"
         },
-		"vm_image": {
-            "value": "https://yourstorageaccount.blob.core.windows.net/system/Microsoft.Compute/Images/vhds/testvm1image-osDisk.a2652bad-ba56-4c0a-bd22-a651ccf8cfc8.vhd"
+        "vmSize": {
+            "value": "Standard_F1s"
         },
-        "networkInterface_name": {
-            "value": "wso2NI"
+        "newOrExistingVnet": {
+            "value": "existing"
         },
-        "networkSecurityGroup_name": {
-            "value": "wso2NSG"
+        "newOrExistingVnetName": {
+            "value": "testrg2-vnet"
         },
-        "publicIPAddress_name": {
-            "value": "wso2IP"
-        },
-        "virtualNetwork_name": {
-            "value": "wso2vnet"
-        },
-        "storageAccount_name": {
-            "value": "yourstorageaccount"
+        "newOrExistingSubnetName": {
+            "value": "default"
         }
     }
 }
