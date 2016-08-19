@@ -15,6 +15,8 @@ You create a service principal and bind it to an application so that the Azure l
 
 ### 1) Create a Service Principal and bind it to an application 
 
+This is done to automate the login porcess to your Azure subscription in the CLI. In the manual login process, you are authenticated with web interaction which is not possible in a minimal version of Linux. Upon successful creation of a service principal, you will have tenantId, service principal id/client id and service principal key/secret. Here we create a service principal and then we bind it to an active direcory application. Therefore, unlike user authentication, this method authenticates you against this application in the active directory.
+
 #### 1.1 Install Azure CLI if you have not done it yet. You can find help for that [here.](https://azure.microsoft.com/en-us/documentation/articles/xplat-cli-install/)
 
 #### 1.2 Login to your subscription
@@ -49,9 +51,9 @@ Once you created the service principal, next step is to grant permission on it, 
 
 Example: 
 
->     azure role assignment create --spn "http://BOSHAzureCPI" --roleName "Owner" --subscription 87654321-1234-5678-1234-678912345678
+>     azure role assignment create --spn "http://wso2.org" --roleName "Owner" --subscription 87654321-1234-5678-1234-678912345678
 
-Note that as the service principal name you can use any value under service principal names that is returned from the previous command. In the example I have used the home page but you can use the service principal ID as well ( Ex: 6dc9e2f9-d3db-46a7-b1b3-9e369e698c37). Service principal ID also known as client ID and the password given also known as the client key or credential. 
+Note that as the service principal name you can use any value under service principal names that is returned from the previous command. In the example I have used the home page but you can use the service principal ID as well ( Ex: 6dc9e2f9-d3db-46a7-b1b3-9e369e698c37). Service principal ID also known as client ID and the password given also known as the client key or secret. 
 
 #### 1.7 Verify the Service Principal with login command
 
@@ -77,6 +79,8 @@ First of all you have to configure your VM with WSO2 Application Server. Followi
 * In the WSO2 documentation, you will be asked to update the .bashrc with java home. Do not update /home/<user>/.bashrc , instead update /etc/bash.bashrc with the java home.
 
 #### 2.1 Log into to your VM from a SSH client and execute the following command.
+
+In this step you deprovission the VM.
 
 >  sudo waagent -deprovision+user
 
@@ -116,9 +120,24 @@ Note that Azcopy is available only for Windows.
 
 #### 3.2 Next method is using Azure CLI.
 
->     azure storage blob copy start '<https://<sourceStorageAccount>.blob.core.windows.net/mycontainer2/myBlockBlob2>' <destinationAccountContainer>
+First of all you have to set env variables. For Linux,
 
-This is the prefered method since previous method needs the source and destination storage account keys. In this method, the source URL provided for the copy operation must either be publicly accessible, or include a SAS (shared access signature) token.
+>       export AZURE_STORAGE_ACCOUNT=<account_name>
+    
+>      export AZURE_STORAGE_ACCESS_KEY=<key>
+    
+    For Windows,
+    
+>      set AZURE_STORAGE_ACCOUNT=<account_name>
+
+>      set AZURE_STORAGE_ACCESS_KEY=<key>
+
+Once you set the env variables, execute the following command.
+
+
+>     azure storage blob copy start "<https://<sourceStorageAccount>.blob.core.windows.net/mycontainer/myBlockBlob2/osdisk.vhd" "<destinationAccountContainer>"
+
+This is the prefered method since previous method needs the source storage account keys. If you intend to provide VM images to thrid parties, then this method is most suitable. In this method, the source URL provided for the copy operation must either be publicly accessible, or include a SAS (shared access signature) token.
 
 
 
@@ -126,7 +145,7 @@ This is the prefered method since previous method needs the source and destinati
 
 
 Some sample parameter values are provided in the parameters.json file. 
-As the vm_image parameter, provide the link to the captured VM image. Follow the below path to find the VM image which is stored in the storage account where the original VM was resided. 
+As the vm_image parameter, provide the link to the captured VM image. Or else you can use a copied VM image. Follow the below path to find the VM image which is stored in the storage account where the original VM was resided. 
 
 {your storage account}>>Blobs>>System>>Microsoft.Compute>>Images>>vhds>>{VM_Image}>>URL
 
